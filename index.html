@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribuição de Borel - Calculadora</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Distribuição de Borel</h1>
+        <h2>Calculadora de PMF e CDF</h2>
+
+        <label for="lambda">Taxa (λ): </label>
+        <input type="number" id="lambda" value="0.3" step="0.01" min="0" max="0.99">
+        <br><br>
+        <label for="maxK">Máximo valor de tentativas (k): </label>
+        <input type="number" id="maxK" value="15" min="1">
+        <br><br>
+        <button onclick="calculateBorel()">Calcular</button>
+
+        <h3>Função de Massa de Probabilidade (PMF)</h3>
+        <canvas id="pmfChart"></canvas>
+
+        <h3>Função de Distribuição Acumulada (CDF)</h3>
+        <canvas id="cdfChart"></canvas>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
