@@ -1,34 +1,28 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuição de Borel - Calculadora</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distribuição de Borel</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="container">
+    <h1>Distribuição de Borel</h1>
 
-    <div class="container">
-        <h1>Distribuição de Borel</h1>
-        <h2>Calculadora de PMF e CDF</h2>
+    <label for="lambda">Valor de λ:</label>
+    <input type="number" id="lambda" value="0.6" step="0.1" min="0" max="2">
 
-        <label for="lambda">Taxa (λ): </label>
-        <input type="number" id="lambda" value="0.3" step="0.01" min="0" max="0.99">
-        <br><br>
-        <label for="maxK">Máximo valor de tentativas (k): </label>
-        <input type="number" id="maxK" value="15" min="1">
-        <br><br>
-        <button onclick="calculateBorel()">Calcular</button>
+    <label for="nMax">Número máximo de eventos (n):</label>
+    <input type="number" id="nMax" value="10">
 
-        <h3>Função de Massa de Probabilidade (PMF)</h3>
-        <canvas id="pmfChart"></canvas>
+    <button onclick="calculateBorel()">Calcular e Plotar</button>
 
-        <h3>Função de Distribuição Acumulada (CDF)</h3>
-        <canvas id="cdfChart"></canvas>
-    </div>
+    <canvas id="pmfChart"></canvas>
+    <canvas id="cdfChart"></canvas>
+  </div>
 
-    <script src="script.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

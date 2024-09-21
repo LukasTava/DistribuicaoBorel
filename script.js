@@ -1,88 +1,99 @@
-// Função para calcular a PMF da Distribuição de Borel
-function borelPMF(k, lambda) {
-    const factorial = (n) => (n <= 1 ? 1 : n * factorial(n - 1));
-    return ((lambda * k) ** (k - 1) * Math.exp(-lambda * k)) / factorial(k);
+let pmfChart, cdfChart; // Variáveis para armazenar os gráficos e destruí-los depois
+
+// Função para calcular a função de massa de probabilidade (PMF)
+function borelPMF(lambda, n) {
+  const factorial = (x) => (x <= 1 ? 1 : x * factorial(x - 1));
+  const eLambdaN = Math.exp(-lambda * n);
+  const lambdaNPower = Math.pow(lambda * n, n - 1);
+  const denominator = factorial(n);
+
+  return (eLambdaN * lambdaNPower) / denominator;
 }
 
-// Função para calcular a CDF (soma cumulativa da PMF)
-function borelCDF(pmfArray) {
-    let cdf = [];
-    let sum = 0;
-    for (let i = 0; i < pmfArray.length; i++) {
-        sum += pmfArray[i];
-        cdf.push(sum);
-    }
-    return cdf;
+// Função para calcular a função de distribuição acumulada (CDF)
+function borelCDF(lambda, nMax) {
+  let cumulative = 0;
+  const cdfArray = [];
+
+  for (let n = 1; n <= nMax; n++) {
+    cumulative += borelPMF(lambda, n);
+    cdfArray.push(cumulative);
+  }
+  return cdfArray;
 }
 
-// Função para atualizar os gráficos
-function updateChart(chart, data, labels) {
-    chart.data.labels = labels;
-    chart.data.datasets[0].data = data;
-    chart.update();
+// Função para destruir os gráficos existentes
+function destroyCharts() {
+  if (pmfChart) {
+    pmfChart.destroy();
+  }
+  if (cdfChart) {
+    cdfChart.destroy();
+  }
 }
 
-// Função para calcular e exibir os gráficos
+// Função principal para calcular e plotar os gráficos
 function calculateBorel() {
-    const lambda = parseFloat(document.getElementById('lambda').value);
-    const maxK = parseInt(document.getElementById('maxK').value);
+  const lambda = parseFloat(document.getElementById('lambda').value);
+  const nMax = parseInt(document.getElementById('nMax').value);
 
-    let kValues = [];
-    let pmfValues = [];
+  // Calcula a PMF e CDF
+  const pmfData = [];
+  const cdfData = borelCDF(lambda, nMax);
 
-    // Calcula os valores da PMF
-    for (let k = 1; k <= maxK; k++) {
-        kValues.push(k);
-        pmfValues.push(borelPMF(k, lambda));
-    }
+  for (let n = 1; n <= nMax; n++) {
+    pmfData.push(borelPMF(lambda, n));
+  }
 
-    // Calcula os valores da CDF
-    let cdfValues = borelCDF(pmfValues);
+  // Destruir os gráficos existentes antes de criar novos
+  destroyCharts();
 
-    // Atualiza os gráficos
-    updateChart(pmfChart, pmfValues, kValues);
-    updateChart(cdfChart, cdfValues, kValues);
-}
-
-const pmfCtx = document.getElementById('pmfChart').getContext('2d');
-const cdfCtx = document.getElementById('cdfChart').getContext('2d');
-
-const pmfChart = new Chart(pmfCtx, {
+  // Plotar PMF
+  const pmfChartCtx = document.getElementById('pmfChart').getContext('2d');
+  pmfChart = new Chart(pmfChartCtx, {
     type: 'bar',
     data: {
-        labels: [],
-        datasets: [{
-            label: 'PMF (P(X = k))',
-            data: [],
-            backgroundColor: 'rgba(54, 162, 235, 0.7)',
-        }]
+      labels: Array.from({ length: nMax }, (_, i) => i + 1),
+      datasets: [
+        {
+          label: 'PMF (Função de Massa de Probabilidade)',
+          data: pmfData,
+          backgroundColor: 'rgba(54, 162, 235, 0.6)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }
+      ]
     },
     options: {
-        responsive: true,
-        scales: {
-            x: { title: { display: true, text: 'Número de tentativas (k)' }},
-            y: { title: { display: true, text: 'P(X = k)' }}
-        }
+      scales: {
+        y: { beginAtZero: true },
+        x: { title: { display: true, text: 'Número de eventos (n)' } }
+      }
     }
-});
+  });
 
-const cdfChart = new Chart(cdfCtx, {
+  // Plotar CDF
+  const cdfChartCtx = document.getElementById('cdfChart').getContext('2d');
+  cdfChart = new Chart(cdfChartCtx, {
     type: 'line',
     data: {
-        labels: [],
-        datasets: [{
-            label: 'CDF (P(X ≤ k))',
-            data: [],
-            backgroundColor: 'rgba(75, 192, 192, 0.7)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            fill: false
-        }]
+      labels: Array.from({ length: nMax }, (_, i) => i + 1),
+      datasets: [
+        {
+          label: 'CDF (Função de Distribuição Acumulada)',
+          data: cdfData,
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 2,
+          fill: true
+        }
+      ]
     },
     options: {
-        responsive: true,
-        scales: {
-            x: { title: { display: true, text: 'Número de tentativas (k)' }},
-            y: { title: { display: true, text: 'P(X ≤ k)' }}
-        }
+      scales: {
+        y: { beginAtZero: true },
+        x: { title: { display: true, text: 'Número de eventos (n)' } }
+      }
     }
-});
+  });
+}
